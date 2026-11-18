@@ -1,0 +1,139 @@
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{font:14px system-ui,'Malgun Gothic',sans-serif;background:#e8ebe6;color:#253630;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;user-select:none}button,.button{font:inherit;font-weight:700;border:1px solid #d4dcd4;background:#fff;color:#253630;border-radius:8px;padding:7px 10px;cursor:pointer;touch-action:manipulation;text-decoration:none;text-align:center}button:active,.pressed{background:#c7dfca!important}button:disabled{opacity:.35}button:focus-visible{outline:2px solid #268b63}.primary{background:#235844;color:white;border-color:#235844}.tabs{display:flex;gap:5px;padding:4px 7px;align-items:center;flex:none;background:#f4f6f1}.tabs #full{margin-left:auto;font-size:18px;line-height:18px}.tabs #reset{display:none}main{flex:1;min-height:0;display:flex;gap:6px;padding:0 6px 6px;overflow:hidden}.stage{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;position:relative}.top{display:none}.stage:has(#game:not([hidden])) .top{display:flex;position:absolute;top:5px;left:7px;right:7px;z-index:2;justify-content:space-between;gap:5px;pointer-events:none;font-size:12px;font-weight:800;color:#244535}.top span{background:#ffffffdc;border-radius:5px;padding:3px 7px}.top span:empty{display:none}#editor{height:100%;min-height:0;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto minmax(0,1fr);gap:5px}.intro{grid-column:2;grid-row:1;display:flex}.genres{grid-column:1;grid-row:1;display:flex;gap:4px;min-width:0}.genres button{flex:1;white-space:nowrap;padding:6px 3px;display:flex;align-items:center;justify-content:center;gap:5px}.genres strong{font-size:17px}.chosen{background:#dce9dc;border-color:#67977b}.workbench{grid-column:1/-1;display:grid;grid-template-columns:112px minmax(0,1fr);gap:6px;min-height:0}.tools{display:flex;flex-direction:column;gap:8px;padding:5px;background:#f4f6f1;border-radius:8px;min-width:0}.palette{display:grid;gap:5px}.palette button{display:flex;align-items:center;gap:5px;padding:6px 4px;font-size:12px;white-space:nowrap}.palette i{width:24px;height:24px;border-radius:5px;flex:none}.selected{outline:2px solid #317e5c;outline-offset:-2px;background:#dbe9da}.tools .editbar{display:grid;gap:5px}.tools label{font-size:12px;display:flex;flex-direction:column}.tools input{width:100%;accent-color:#317e5c}.tools .editbar button{font-size:12px;padding:7px 3px}.drawing{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;min-width:0;gap:5px}#art,#game{display:block;background:#fff;border-radius:6px;touch-action:none;max-width:100%;max-height:100%;object-fit:contain}#art{cursor:crosshair;flex:none;box-shadow:0 0 0 1px #bfcac0}.playbar{display:flex;align-items:center;gap:8px;width:100%;min-height:40px;flex:none}.playbar p{flex:1;margin:0;font-size:12px;color:#50655a}.playbar button{min-width:120px;min-height:40px}#game{flex:1;min-height:0;width:100%;height:100%;background:#f9f7ed}.controls{font-size:12px;text-align:center;padding:3px;flex:none}.gameactions{display:flex;gap:5px;justify-content:center;flex:none}.gameactions button{padding:5px 13px}.touch{display:flex;justify-content:space-between;align-items:center;gap:5px;flex:none;padding:5px 3px max(5px,env(safe-area-inset-bottom))}.touch button{flex:1;max-width:140px;min-height:50px;touch-action:none;font-size:19px;background:#f8faf6}.touch [data-key=Space]{background:#ffdc83;max-width:220px}.touch[data-mode="1"],.touch[data-mode="3"]{display:grid;grid-template-columns:repeat(3,65px);grid-template-areas:'. up .' 'left down right';justify-content:center}.touch [data-key=ArrowUp]{grid-area:up}.touch [data-key=ArrowLeft]{grid-area:left}.touch [data-key=ArrowDown]{grid-area:down}.touch [data-key=ArrowRight]{grid-area:right}.touch[data-mode="2"]{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;grid-template-areas:'left right down up'}.touch[data-mode="2"] button{max-width:none}aside{width:320px;overflow:auto;background:#f7f9f4;padding:10px;flex:none;border-radius:8px}aside h2,aside h3{margin:6px 0}aside p{font-size:12px;line-height:1.4}.legend{display:grid;gap:3px;font-size:12px}.legend span:before{content:'';display:inline-block;background:var(--c);width:10px;height:10px;margin-right:5px;border-radius:50%}.camera{position:relative;aspect-ratio:4/3;background:#222;overflow:hidden}.camera video,.camera canvas{position:absolute;width:100%;height:100%;object-fit:contain}.camera #cammsg{position:absolute;bottom:0;background:#000b;color:white;width:100%;padding:5px;font-size:12px}aside>button,aside>.button{display:block;width:100%;margin-top:5px}.examples{display:flex;flex-wrap:wrap;gap:3px}.option{display:block;margin:6px 0}body:has(#game:not([hidden])):has(#paperPanel[hidden]) .tabs{display:none}body:has(#game:not([hidden])):has(#paperPanel[hidden]) main{padding:0} @media(pointer:fine) and (min-width:801px){.touch{display:none!important}}@media(max-width:700px){.workbench{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:4px}.tools{padding:3px;gap:3px}.palette{grid-template-columns:repeat(5,1fr);gap:3px}.palette button{justify-content:center;flex-direction:column;font-size:10px;gap:2px;padding:3px 1px}.palette i{width:23px;height:20px}.tools .editbar{display:flex;align-items:center;gap:3px}.tools label{flex:1;flex-direction:row;align-items:center;gap:3px;white-space:nowrap;font-size:10px}.tools input{min-width:35px;width:100%}.tools .editbar button{font-size:11px;padding:5px 4px;white-space:nowrap}.genres button{font-size:11px;gap:2px}.genres strong{font-size:13px}.intro button{font-size:11px;padding:5px}.playbar p{font-size:10px}.playbar button{min-width:95px;font-size:12px}.tabs button{padding:5px 9px;font-size:12px}main:has(aside:not([hidden])){flex-direction:column;overflow:auto}main:has(aside:not([hidden])) .stage{flex:none;height:42dvh}aside{width:100%;overflow:visible}.touch button{min-height:58px}.touch[data-mode="1"],.touch[data-mode="3"]{grid-template-columns:repeat(3,70px);gap:3px}.touch[data-mode="0"],.touch[data-mode="4"]{gap:12px}.touch[data-mode="0"] [data-key=Space]{margin-left:20px}.gameactions button{min-height:32px}}body.playing .tabs{display:none!important}body.playing main{padding:0;overflow:hidden;flex-direction:row}body.playing #paperPanel{display:none!important}body.playing .stage{height:auto!important;flex:1!important}body.playing .gameactions{padding:3px 5px;background:#f4f6f1}body.playing .controls{background:#f4f6f1}body.playing #game{border-radius:0}body.playing .top{top:7px}.drawing{justify-content:flex-start}.touch[data-mode="0"],.touch[data-mode="4"]{justify-content:space-between}.touch[data-mode="0"] [data-key=Space],.touch[data-mode="4"] [data-key=Space]{margin-left:auto}.touch[data-mode="0"] button,.touch[data-mode="4"] button{max-width:100px}.touch[data-mode="0"] [data-key=Space],.touch[data-mode="4"] [data-key=Space]{max-width:160px} @media(max-width:700px){body.playing .touch{padding:7px 10px max(8px,env(safe-area-inset-bottom));background:#e8ebe6}.touch[data-mode="1"],.touch[data-mode="3"]{grid-template-columns:repeat(3,minmax(65px,90px))}.touch[data-mode="0"] button,.touch[data-mode="4"] button{min-height:65px}}
+#heroEditor{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:5px;background:#f4f6f1;border-radius:8px}.heroHead{display:flex;justify-content:space-between;align-items:center;gap:8px}.heroHead strong{font-size:17px}.heroHead small{display:block;color:#50655a;font-size:11px}#heroParts,#heroMoves,#heroColors{display:flex;gap:4px}#heroParts button,#heroMoves button{flex:1;font-size:12px;padding:6px 3px;white-space:nowrap}.heroWorkspace{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}.heroDraw,.heroPreview{min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.heroDraw canvas,.heroPreview canvas{min-height:0;max-width:100%;max-height:calc(100% - 35px);object-fit:contain;touch-action:none;border:1px solid #c6d4ca;border-radius:8px;background:white}.heroDraw canvas{height:100%;width:auto;aspect-ratio:4/5}.heroPreview canvas{height:100%;width:auto;aspect-ratio:1}.heroPreview #heroMoves{width:100%}.heroTools{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.heroTools label{display:flex;align-items:center;gap:4px;font-size:12px}.heroTools input{width:90px;accent-color:#235844}#heroColors button{width:27px;height:28px;border:1px solid #aaa;padding:0}#heroGuide,#heroNotice{font-size:12px;color:#50655a}.touch [data-key=KeyX]{background:#f6b2a3}.touch[data-mode="0"] button{min-width:0;font-size:15px}@media(max-width:700px){.heroWorkspace{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) minmax(0,.72fr);gap:3px}.heroTools{gap:3px}.heroTools button{font-size:11px;padding:5px}.heroHead strong{font-size:14px}.heroHead small{font-size:10px}.heroDraw canvas,.heroPreview canvas{max-height:calc(100% - 25px)}#heroParts button,#heroMoves button{font-size:10px}.heroPreview #heroMoves{max-width:350px}#heroNotice{font-size:10px}}
+#layer{white-space:nowrap}.intro{display:flex;justify-content:flex-end;gap:5px}.heroPreview #heroMoves{flex-wrap:wrap}#heroMoves button{min-width:40px}@media(max-width:700px){.tools .editbar{flex-wrap:wrap}.tools .editbar label{min-width:90px}.tools .editbar button{flex:none}.heroPreview #heroMoves button{font-size:10px}}@media(pointer:coarse){.touch button{touch-action:none;user-select:none;-webkit-user-select:none}}
+/* Touch controls remain available on hybrid touch laptops. */
+#analogPad{position:relative;width:112px;height:112px;border:2px solid #6c8479;border-radius:50%;background:#d9e5ddaa;touch-action:none;user-select:none;margin:0 12px;flex:none}#stickKnob{position:absolute;left:50%;top:50%;width:44px;height:44px;border-radius:50%;background:#526d60;transform:translate(-50%,-50%);pointer-events:none}.touch[data-mode="1"],.touch[data-mode="3"]{display:flex;justify-content:flex-start}.touch[data-mode="2"]{grid-template-columns:repeat(5,minmax(0,1fr));grid-template-areas:'left right down up drift'}.touch[data-mode="2"] [data-key=Space]{grid-area:drift;margin:0;font-size:14px}.touch button.pressed{background:#b5d4c2;transform:scale(.95)}@media(any-pointer:coarse){body.playing .touch:not([hidden]){display:flex!important}body.playing .touch[data-mode="2"]:not([hidden]){display:grid!important}}.touch[hidden],#analogPad[hidden],.touch button[hidden]{display:none!important}
+
+/* Six-genre, auto-detect, dual-player pong controls */
+.genres{flex-wrap:wrap;align-items:center}.genres button{min-width:65px}.genres button:first-child{border-color:#276d58}.touch[data-mode="5"]{display:flex!important;justify-content:space-between;gap:5px;flex-wrap:nowrap}.touch[data-mode="5"] button{flex:1;max-width:none;min-width:0;min-height:62px;font-size:13px;padding:5px;background:#f2f7ff}.touch[data-mode="5"] [data-key="KeyW"],.touch[data-mode="5"] [data-key="KeyS"]{background:#cde1ff}.touch[data-mode="5"] [data-key="ArrowUp"],.touch[data-mode="5"] [data-key="ArrowDown"]{background:#ffd9dd}.touch[data-mode="5"] button.pressed{filter:brightness(.90)}@media(max-width:700px){.genres{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}.genres button{padding:5px 2px;min-width:0}.touch[data-mode="5"]{padding:8px 4px max(8px,env(safe-area-inset-bottom));gap:3px}.touch[data-mode="5"] button{font-size:12px;min-height:65px;padding:3px}.touch[data-mode="5"] [data-key="Space"]{display:none}}
+
+.touch[data-mode="5"] [data-key="KeyW"]{order:1}.touch[data-mode="5"] [data-key="KeyS"]{order:2}.touch[data-mode="5"] [data-key="ArrowUp"]{order:3}.touch[data-mode="5"] [data-key="ArrowDown"]{order:4}
+
+/* Kid-first editor: one large canvas, five colors and one primary action. */
+#editor{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);gap:4px}
+.intro{grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:flex-end;gap:5px;min-width:0;min-height:31px}
+.quick-guide{margin-right:auto;font-size:13px;font-weight:750;color:#355847;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.intro button{padding:6px 9px;white-space:nowrap;flex:none}
+.genres{grid-column:1;grid-row:2;display:flex;min-width:0;flex-wrap:wrap;gap:4px}
+.genres button{flex:1 1 75px;min-height:36px}
+.workbench{grid-column:1;grid-row:3;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:4px;min-height:0}
+.tools{display:flex;align-items:center;flex-wrap:wrap;gap:5px;padding:4px 5px;min-width:0;background:#f5f8f3}
+.palette{flex:1 1 380px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;min-width:0}
+.palette button{justify-content:center;min-width:0;min-height:40px;gap:7px;padding:4px;font-size:13px}
+.palette i{width:22px;height:22px}
+.quickbar{display:flex;gap:4px;flex:0 0 auto}
+.quickbar button{white-space:nowrap;min-height:40px;padding:5px 9px;font-size:12px}
+.tools .editbar{width:100%;display:flex;flex-wrap:wrap;gap:5px;padding-top:3px;border-top:1px solid #dae5db;align-items:center}
+.tools .editbar[hidden]{display:none!important}
+.tools .editbar label{flex-direction:row;align-items:center;gap:7px;flex:1 1 125px}
+.tools .editbar input{flex:1;min-width:65px;width:auto}
+.tools .editbar button{font-size:12px;min-height:34px;padding:5px 9px}
+.drawing{justify-content:flex-start;min-height:0;overflow:hidden}
+.playbar{min-height:48px;justify-content:space-between}
+.playbar p{font-size:12px;min-width:0}
+.playbar button{min-width:170px;min-height:46px;font-size:16px;border-radius:10px;box-shadow:0 2px 0 #173e2f}
+.gameactions button{min-height:38px;font-size:13px;flex:1}
+.build-overlay{position:fixed;inset:0;background:rgba(246,249,240,.95);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;color:#244b3b;text-align:center;padding:18px}
+.build-overlay strong{font-size:clamp(18px,4.8vw,27px)}
+.build-overlay span{font-size:13px;color:#64746c}
+.build-spinner{width:46px;height:46px;border:5px solid #d6e6d9;border-top-color:#238563;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:700px){
+ #editor{grid-template-rows:auto auto minmax(0,1fr);gap:3px}
+ .intro{min-height:30px;gap:3px}
+ .quick-guide{font-size:10.5px}
+ .intro button{font-size:10.5px;padding:6px 5px}
+ .genres{grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
+ .genres button{min-height:30px;padding:4px 2px;flex:auto}
+ .workbench{grid-template-rows:auto minmax(0,1fr);gap:3px}
+ .tools{gap:3px;padding:2px 3px}
+ .palette{flex:1 1 100%;gap:3px}
+ .palette button{min-height:38px;padding:3px 1px;gap:2px;font-size:10px}
+ .palette i{width:22px;height:17px}
+ .quickbar{width:100%;justify-content:space-evenly}
+ .quickbar button{min-height:28px;padding:4px 15px;font-size:11px}
+ .tools .editbar{gap:3px}
+ .tools .editbar label{font-size:11px;flex:1 1 100px}
+ .tools .editbar button{font-size:10px;min-height:28px}
+ .playbar{min-height:42px;gap:3px}
+ .playbar p{font-size:10px;line-height:1.25}
+ .playbar button{font-size:14px;min-width:132px;min-height:42px}
+ .gameactions{gap:4px}
+ .gameactions button{font-size:11px;min-height:36px;padding:4px}
+}
+@media(max-width:380px){.quick-guide{display:none}.intro{justify-content:space-evenly}}
+/* Explicitly cancel the legacy vertical tool rail. */
+.tools{flex-direction:row;justify-content:flex-start;align-content:flex-start}
+.palette{align-self:center}
+.palette button{height:42px}
+@media(max-width:700px){.palette button{height:38px}}
+
+/* Short, non-blocking hint when a child presses Create on an empty canvas. */
+.suggested{outline:3px solid #21996d;outline-offset:1px;animation:suggestPulse .5s ease-in-out 2}
+@keyframes suggestPulse{50%{filter:brightness(1.15);transform:scale(1.04)}}
+
+/* Thin pen presets are visible without opening the advanced menu. */
+.pen-sizes{display:flex;align-items:center;gap:3px;white-space:nowrap}
+.pen-sizes>span{font-size:11px;font-weight:800;color:#456457;padding:0 3px}
+.quickbar .pen-sizes button{min-width:28px;min-height:36px;padding:3px 5px;border-radius:7px;font-size:12px}
+.pen-sizes button.chosen{background:#cfe8d9;border-color:#3e916a;box-shadow:inset 0 0 0 1px #3e916a}
+.actor-review{width:min(440px,96vw);display:grid;gap:9px;background:#fff;border:1px solid #d6e4dc;border-radius:16px;padding:14px;box-shadow:0 8px 30px #28463b21;text-align:left}
+.review-item{display:grid;gap:6px}.review-label{display:flex;justify-content:space-between;align-items:center;gap:6px}.review-label b{font-size:14px}
+.actor-review .review-label span{font-size:13px;color:#2e6b52;font-weight:750}
+.review-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.review-choices button{min-height:39px;padding:5px;font-size:13px}
+.review-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:7px;margin-top:5px}
+.review-actions button{min-height:43px;font-size:14px}
+.actor-review .review-tip{text-align:center;font-size:11px;color:#72837a;line-height:1.3}
+.build-overlay.review-mode{background:rgba(246,249,240,.96);gap:9px}
+.build-overlay.review-mode .build-spinner{display:none}
+@media(max-width:700px){
+ .quickbar{gap:3px;align-items:center}
+ .quickbar .pen-sizes button{min-width:25px;min-height:28px;padding:2px 3px;font-size:11px}
+ .quickbar .pen-sizes>span{font-size:10px}
+ .quickbar>button{padding:4px 7px}
+ .actor-review{padding:11px}
+}
+
+/* Portrait mobile gameplay remains native-size and uses safe viewport area.
+   Switching to landscape never stretches the original drawing. */
+html,body{height:100%;height:100dvh}
+body.playing .stage{min-height:0}
+body.playing #game{width:100%;height:100%;object-fit:contain;min-width:0;min-height:0}
+#rotateGame{display:none}
+@media (any-pointer:coarse), (max-width:700px){
+ body.playing #rotateGame:not([hidden]){display:block;min-width:68px}
+ body.playing .gameactions{flex-wrap:nowrap;gap:3px}
+ body.playing .gameactions button{min-width:0;flex:1;padding:6px 3px;font-size:clamp(10px,2.8vw,13px)}
+}
+@media (orientation:landscape) and (max-height:510px){
+ body.playing .controls{font-size:10px;padding:0 3px}
+ body.playing .gameactions{padding:2px 5px}
+ body.playing .gameactions button{min-height:28px;padding:2px 5px}
+ body.playing .touch{padding:2px 8px max(2px,env(safe-area-inset-bottom))!important;gap:4px}
+ body.playing .touch button{min-height:34px!important;font-size:12px}
+ body.playing #analogPad{height:67px;width:67px}
+ body.playing #stickKnob{height:28px;width:28px}
+}
+
+/* Genre-aware touchscreen controls. Jump has ONE right-thumb action;
+   the left hand is free to use the joystick instead of a directional pad. */
+body.playing .touch[data-mode="0"],body.playing .touch[data-mode="1"],body.playing .touch[data-mode="3"]{
+  display:flex!important;align-items:center;justify-content:space-between;min-height:78px;
+}
+body.playing #analogPad:not([hidden]){order:0;flex:0 0 auto;margin-left:14px;margin-right:auto;}
+body.playing .touch[data-mode="0"] [data-key="Space"]:not([hidden]){
+  order:2;margin-left:auto;margin-right:13px;max-width:none!important;
+  flex:0 0 auto;width:86px;height:66px;min-height:66px;border-radius:34px;
+  background:#f5d76c;font-size:18px;font-weight:800;
+}
+body.playing .touch[data-mode="1"] button[hidden],body.playing .touch[data-mode="3"] button[hidden]{display:none!important}
+@media (max-width:700px){body.playing .touch[data-mode="0"]{padding:4px 9px max(5px,env(safe-area-inset-bottom))}}
+@media (orientation:landscape) and (max-height:510px){body.playing .touch[data-mode="0"] [data-key="Space"]:not([hidden]){height:54px;min-height:54px}}
+
+/* No floating mobile joystick on keyboard-only desktop displays. */
+@media (pointer:fine) and (min-width:801px){
+  body.playing .touch[data-mode="0"],
+  body.playing .touch[data-mode="1"],
+  body.playing .touch[data-mode="3"]{display:none!important}
+}
