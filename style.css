@@ -143,3 +143,12 @@ body.playing .touch[data-mode="1"] button[hidden],body.playing .touch[data-mode=
 /* Five FHD pen presets, including small mobile portrait displays. */
 .pen-sizes{flex:0 1 auto;min-width:0}
 @media(max-width:700px){.quickbar{flex-wrap:wrap;justify-content:center}.pen-sizes{flex:1 1 100%;justify-content:center}.quickbar .pen-sizes button{min-width:28px;padding:3px 8px}}
+
+/* Full-bleed phone editor: no side gutters around the drawing canvas. */
+@media (max-width:900px){
+ body:not(.playing) main:not(:has(aside:not([hidden]))){padding-left:0;padding-right:0}
+ body:not(.playing) .stage{width:100%;min-width:0}
+ body:not(.playing) .workbench,body:not(.playing) .drawing{width:100%;min-width:0}
+ body:not(.playing) .drawing{align-items:stretch}
+ body:not(.playing) #art{max-width:100%;margin:0;border-radius:0;align-self:stretch}
+}
