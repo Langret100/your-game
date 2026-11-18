@@ -2,104 +2,97 @@
 // Game genre suggestion and two-player rally game. All drawing is processed locally.
 (()=>{
   const originalStart=start, originalUpdate=update, originalDraw=draw;
-  // An inexpensive coarse segmentation pass. A suggestion, not ML image understanding.
+  // Genre detection consumes the SAME full-resolution analysis used by the
+  // game. Never resize the child's drawing merely to guess its genre.
+  // An explicit genre selection still overrides this suggestion.
+  function sceneForGenre(source){
+    const old=window.preparedActorScene;
+    if(old?.art===source&&old.w===source.width&&old.h===source.height)return old.scene;
+    W=source.width;H=source.height;
+    const scene=analyze(source);
+    window.preparedActorScene={art:source,w:W,h:H,scene};
+    return scene;
+  }
   function guessGenre(source){
-    const thumb=cv(156,100),tc=thumb.getContext('2d',{willReadFrequently:true});
-    tc.drawImage(source,0,0,thumb.width,thumb.height);
-    const {data}=tc.getImageData(0,0,156,100),balance=source.paperSource?paperWhiteBalance(data,156,100):[1,1,1],labels=new Uint8Array(15600),stat=Array.from({length:6},()=>({n:0,x:0,y:0,minX:156,minY:100,maxX:0,maxY:0}));
-    let blackSide=[0,0,0,0],blackCenter=0;
-    for(let y=0;y<100;y++)for(let x=0;x<156;x++){
-      const k=y*156+x,i=k*4,c=color(Math.min(255,data[i]*balance[0]),Math.min(255,data[i+1]*balance[1]),Math.min(255,data[i+2]*balance[2]));labels[k]=c;
-      if(!c)continue;
-      const s=stat[c];s.n++;s.x+=x;s.y+=y;s.minX=Math.min(s.minX,x);s.maxX=Math.max(s.maxX,x);s.minY=Math.min(s.minY,y);s.maxY=Math.max(s.maxY,y);
-      if(c===1){if(x<12)blackSide[0]++;if(x>143)blackSide[1]++;if(y<12)blackSide[2]++;if(y>87)blackSide[3]++;if(x>25&&x<131&&y>20&&y<80)blackCenter++}
-    }
-    const blobs=(c,min=5)=>comps(labels,156,100,c,min).sort((a,b)=>b.n-a.n);
-    const blue=blobs(2),red=blobs(3),yellow=blobs(5),green=blobs(4);
-    // Fine green marker strokes can vanish at 156x100. Trust the completed
-    // full-resolution analysis if available; otherwise check a sharper
-    // downsample once. A green *component*, not isolated JPEG noise, wins.
-    let hasGoal=green.length>0;
-    if(!hasGoal){
-      const cached=window.preparedActorScene;
-      if(cached?.art===source&&cached.scene?.o?.[4]?.length)hasGoal=true;
-      else{
-        const fine=cv(390,220),fg=fine.getContext('2d',{willReadFrequently:true});
-        fg.drawImage(source,0,0,390,220);
-        const fdata=fg.getImageData(0,0,390,220).data,mask=new Uint8Array(390*220),wb=source.paperSource?paperWhiteBalance(fdata,390,220):[1,1,1];
-        for(let i=0;i<mask.length;i++)mask[i]=color(Math.min(255,fdata[i*4]*wb[0]),Math.min(255,fdata[i*4+1]*wb[1]),Math.min(255,fdata[i*4+2]*wb[2]));
-        hasGoal=comps(mask,390,220,4,7).some(o=>o.n>=8&&Math.max(o.x1-o.x0,o.y1-o.y0)>=3);
-      }
-    }
-    const b=blue[0],r=red[0],z=yellow[0],ratio=o=>(o.y1-o.y0+1)/Math.max(1,o.x1-o.x0+1);
-    const center=o=>[(o.x0+o.x1)/2/156,(o.y0+o.y1)/2/100];
-    // Hand-drawn paddles on opposite sides + a central ball -> two-player rally.
-    if(!hasGoal&&b&&r&&z&&center(b)[0]<.31&&center(r)[0]>.69&&ratio(b)>1.9&&ratio(r)>1.9&&center(z)[0]>.24&&center(z)[0]<.76)return 5;
-    // A course with a left-side player, an exit flag on the right, and
-    // irregular black terrain is a platformer, not pinball. Red circles above
-    // platforms are enemies; they are NOT sufficient evidence of bumpers.
-    const leftStart=b&&center(b)[0]<.28&&center(b)[1]>.38;
-    const rightGoal=green.some(o=>center(o)[0]>.72);
-    const hasCourse=stat[1].n>75&&stat[1].maxX-stat[1].minX>92;
-    // A green destination ALWAYS describes an exploration objective in AUTO
-    // mode: prefer platforming; only a clearly enclosed corridor layout is a maze.
-    // Deliberate selection of racing/shooting still bypasses auto detection.
-    if(hasGoal){
-      let longWalls=0,lastWall=-20;
-      for(let x=17;x<139;x++){
-        // Check for sustained vertical internal walls, ignoring short steps
-        // and diagonal ramps that should produce a platformer.
+    const scene=sceneForGenre(source),{m,o}=scene;
+    const w=source.width,h=source.height;
+    const player=o[2][0],red=o[3],green=o[4],yellow=o[5];
+    const normX=p=>p.x/w,normY=p=>p.y/h;
+    // Priority 1: a green destination is an exploration objective.
+    // No amount of red enemies or sparse terrain may override it.
+    if(green.length){
+      // Distinguish a labyrinth from platforms using FULL-RES internal wall
+      // continuity. A stepped platform may contain steep short sides, but a
+      // maze usually contains multiple tall separated internal partitions.
+      const y0=Math.round(h*.07),y1=Math.round(h*.93);
+      const x0=Math.round(w*.12),x1=Math.round(w*.88);
+      const wallXs=[];
+      let verticalWeight=0;
+      const stride=Math.max(2,Math.round(w/340));
+      for(let x=x0;x<=x1;x+=stride){
         let longest=0,run=0;
-        for(let y=13;y<87;y++){
-          let wall=false;
-          for(let dx=-1;dx<=1;dx++)if(labels[y*156+x+dx]===1){wall=true;break}
-          run=wall?run+1:0;longest=Math.max(longest,run);
+        for(let y=y0;y<=y1;y++){
+          const k=y*w+x;
+          // Antialiasing gaps of at most a few pixels do not split a wall.
+          let solid=false;
+          for(let dx=-1;dx<=1;dx++)if(m[k+dx]===1){solid=true;break}
+          run=solid?run+1:0;
+          if(run>longest)longest=run;
         }
-        if(longest>=28&&x-lastWall>=6){longWalls++;lastWall=x;}
-      }
-      const intricateMaze=longWalls>=2&&blackCenter>38&&stat[1].maxY-stat[1].minY>45&&stat[1].n>120;
-      return intricateMaze?1:0;
-    }
-    // Racing tracks have top AND bottom closure through the centre. A
-    // pinball table has an open lower drain, so side walls alone cannot
-    // distinguish them.
-    let topMid=0,bottomMid=0;
-    for(let yy=0;yy<100;yy++)for(let xx=45;xx<111;xx++){
-      if(labels[yy*156+xx]!==1)continue;
-      if(yy<12)topMid++;if(yy>87)bottomMid++;
-    }
-    if(blackSide.every(v=>v>13)&&topMid>20&&bottomMid>20&&stat[1].n>200)return 2;
-    // An enclosed pinball table has a ball near the horizontal centre,
-    // multiple interior bumpers, and substantial vertical side walls.
-    const sideCoverage=(left)=>{
-      let rows=0;
-      for(let row=12;row<91;row+=8){
-        let hit=false;
-        for(let x=left?0:146;x<(left?10:156);x++){
-          if(labels[row*156+x]===1){hit=true;break}
+        if(longest>=h*.32){
+          verticalWeight++;
+          if(!wallXs.length||x-wallXs[wallXs.length-1]>w*.075)wallXs.push(x);
         }
-        if(hit)rows++;
       }
-      return rows;
-    };
-    const centralBall=b&&center(b)[0]>.32&&center(b)[0]<.68&&center(b)[1]>.65;
-    if(centralBall&&red.length>=3&&sideCoverage(true)>=5&&sideCoverage(false)>=5&&!rightGoal)return 4;
-    if(leftStart&&hasCourse)return 0;
-    // In a shooting scene, isolated black bars are descending obstacles,
-    // not permanent ground. Only a broad connected course implies platforming.
-    const hasLongPlatform=comps(labels,156,100,1,6).some(o=>(o.x1-o.x0+1)>76&&(o.y1-o.y0+1)>12);
-    if(b&&center(b)[1]>.53&&red.length>=2&&!hasLongPlatform&&stat[1].n<700)return 3;
-    // Maze: connected interior walls reaching across the field.
-    if(stat[1].n>120&&blackCenter>55&&stat[1].maxY-stat[1].minY>58&&stat[1].maxX-stat[1].minX>62&&b&&center(b)[1]<.65)return 1;
-    // A sparse sketch with multiple red objects is more likely to be shooting.
-    if(red.length>=4&&stat[1].n<100)return 3;
+      // Two separate high partitions are required; a steep single hill is
+      // a platformer. Long horizontal paths/ramps are the ordinary default.
+      return wallXs.length>=2&&verticalWeight>=2?1:0;
+    }
+    // Priority 2: two tall side paddles and a centre ball imply pong.
+    if(player&&red.length===1&&yellow.length){
+      const opponent=red[0];
+      const ar=p=>p.h/Math.max(1,p.w);
+      if(normX(player)<.31&&normX(opponent)>.69&&ar(player)>1.9&&ar(opponent)>1.9&&yellow.some(p=>normX(p)>.24&&normX(p)<.76))return 5;
+    }
+    // Exact full-res black geometry; no resized RGB data / pixel threshold.
+    const cols=[0,0,0,0],rows=[0,0],xL=Math.round(w*.065),xR=Math.round(w*.935);
+    let topMid=0,bottomMid=0,blackCount=0,blackMinX=w,blackMaxX=-1;
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+      if(m[y*w+x]!==1)continue;
+      blackCount++;blackMinX=Math.min(blackMinX,x);blackMaxX=Math.max(blackMaxX,x);
+      if(x<xL)cols[0]++;if(x>xR)cols[1]++;
+      if(y<h*.12)cols[2]++;if(y>h*.88)cols[3]++;
+      if(x>w*.29&&x<w*.71){if(y<h*.12)topMid++;if(y>h*.88)bottomMid++;}
+    }
+    // Racing requires an actual enclosing course, not isolated step lines.
+    if(cols.every(n=>n>Math.max(12,w*h*.0007))&&topMid>w*.12&&bottomMid>w*.12&&blackCount>w*h*.012)return 2;
+    // Pinball needs side boundaries AND a central bottom ball, unlike a
+    // left-to-right platform course with scattered red monsters.
+    if(player&&red.length>=3&&normX(player)>.32&&normX(player)<.68&&normY(player)>.65){
+      let leftRows=0,rightRows=0;
+      for(let y=Math.round(h*.12);y<h*.91;y+=Math.max(3,Math.round(h*.08))){
+        let L=false,R=false;
+        for(let x=0;x<xL;x++)if(m[y*w+x]===1){L=true;break}
+        for(let x=xR;x<w;x++)if(m[y*w+x]===1){R=true;break}
+        if(L)leftRows++;if(R)rightRows++;
+      }
+      if(leftRows>=5&&rightRows>=5)return 4;
+    }
+    // A long drawn ground course (even a very thin pen line) is a
+    // platformer. This inspects horizontal span of actual connected ink.
+    const fullBlack=comps(m,w,h,1,12);
+    const longPlatform=fullBlack.some(p=>p.x1-p.x0>w*.48 && p.y1-p.y0>h*.06);
+    if(player&&normX(player)<.32&&blackCount>0&&blackMaxX-blackMinX>w*.51)return 0;
+    // Shooting only when there is NO green objective and the scene resembles
+    // vertical enemy waves, with no strong platform course.
+    if(player&&normY(player)>.52&&red.length>=2&&!longPlatform)return 3;
     return 0;
   }
   window.guessDrawingGenre=guessGenre;
   function getMarker(o,index){return (o||[]).sort((a,b)=>b.n-a.n)[index]||null}
   function preparePong(art){
     const scene=analyze(art),p1=getMarker(scene.o[2],0),p2=getMarker(scene.o[3],0),ball=getMarker(scene.o[5],0);
-    W=art.width;H=art.height;C.width=W;C.height=H;
+    W=art.width;H=art.height;
     const top=25,bottom=H-25, paddleH=clamp(H*.16,64,130),paddleW=clamp(W*.028,14,25);
     const halfW=W*.055;
     // Per-side paddle positions always stay inside their respective half.
@@ -110,7 +103,7 @@
       enemies:[],goals:[],coins:[],life:3,fx:[],bullets:[],score:0,t:0,finished:false,won:false,
       point:[0,0],paddles:[left,right],ball:{x:W/2,y:H/2,vx:0,vy:0,r:Math.max(9,Math.min(W,H)*.018),trail:[],im:ball?.im},serve:.85,serveTo:Math.random()<.5?-1:1,
       goalAt:5,top,bottom,prevSound:0,background:$('paperPanel').hidden?window.getBackground?.():null};
-    active=true;dirty=true;clearInput();window.showGame?.(5);$('controls').textContent='1P (파랑) W/S · 2P (빨강) ↑/↓ · 모바일은 화면 좌우에서 드래그';
+    active=true;dirty=true;clearInput();window.showGame?.(5);resizeGameRender(true);$('controls').textContent='1P (파랑) W/S · 2P (빨강) ↑/↓ · 모바일은 화면 좌우에서 드래그';
     $('status').textContent='2인용 공 튕기기 · 5점 승리';$('score').textContent='1P 0 : 0 2P';
     document.activeElement?.blur();
   }

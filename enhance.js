@@ -3,13 +3,13 @@
 (()=>{
 const oldStart=start,oldUpdate=update,oldDraw=draw,oldFinish=finish;
 let gridCache=new Map();
-function navigation(a,target,body){const step=20,nx=Math.ceil(W/step),ny=Math.ceil(H/step),n=nx*ny,dist=new Int32Array(n).fill(-1),pass=new Uint8Array(n),q=new Int32Array(n);const xy=i=>({x:Math.min(W-15,i%nx*step+10),y:Math.min(H-15,Math.floor(i/nx)*step+10)}),idx=p=>clamp(Math.floor(p.y/step),0,ny-1)*nx+clamp(Math.floor(p.x/step),0,nx-1);let cacheKey=nx+'x'+ny+':'+body.w+':'+body.h;
+function navigation(a,target,body){const step=Math.max(20,Math.round(Math.min(W,H)/32)),nx=Math.ceil(W/step),ny=Math.ceil(H/step),n=nx*ny,dist=new Int32Array(n).fill(-1),pass=new Uint8Array(n),q=new Int32Array(n);const xy=i=>({x:Math.min(W-15,i%nx*step+step/2),y:Math.min(H-15,Math.floor(i/nx)*step+step/2)}),idx=p=>clamp(Math.floor(p.y/step),0,ny-1)*nx+clamp(Math.floor(p.x/step),0,nx-1);let cacheKey=nx+'x'+ny+':'+step+':'+body.w+':'+body.h;
  let cached=gridCache.get(cacheKey);
  if(!cached){for(let i=0;i<n;i++){let p=xy(i);pass[i]=!blocked(body,p.x,p.y)}cached=pass;gridCache.set(cacheKey,cached)}
  else pass.set(cached);let seed=idx(target);if(!pass[seed]){let best=Infinity;for(let i=0;i<n;i++)if(pass[i]){let p=xy(i),d=Math.hypot(p.x-target.x,p.y-target.y);if(d<best){seed=i;best=d}}}if(!pass[seed])return null;let h=0,t=1;q[0]=seed;dist[seed]=0;function adjacent(i){return [i%nx?i-1:-1,i%nx<nx-1?i+1:-1,i>=nx?i-nx:-1,i<n-nx?i+nx:-1]}while(h<t){let i=q[h++];for(let j of adjacent(i))if(j>=0&&pass[j]&&dist[j]<0){dist[j]=dist[i]+1;q[t++]=j}}return {reachable:p=>dist[idx(p)]>=0,next:p=>{let i=idx(p),best=i;for(let j of adjacent(i))if(j>=0&&dist[j]>=0&&(dist[best]<0||dist[j]<dist[best]))best=j;return best===i?target:xy(best)}}}
-start=function(mode,art){gridCache.clear();oldStart(mode,art);let a=game;a.background=$('paperPanel').hidden?window.getBackground?.():null;a.hostile=[];a.navTimer=0;a.shake=0;a.lastLife=a.life;a.lastScore=0;a.jumpPower=470;a.rivals=[];a.adjusted=false;
-if(mode===0){let heights=[];for(let x=12;x<W;x+=24){for(let y=12;y<H-1;y++){if(solid(x,y)&&!solid(x,y-1)&&!solid(x,y-8)){heights.push({x,y});break}}}let diff=0;for(let i=1;i<heights.length;i++)if(heights[i].x-heights[i-1].x<200)diff=Math.max(diff,Math.abs(heights[i].y-heights[i-1].y));a.jumpPower=clamp(Math.sqrt(2*1050*(diff+52)),470,760);if(a.jumpPower>480)a.adjusted=true}
-if(mode===1||mode===2){let route=navigation(a,a.goals[0],a.p);
+start=function(mode,art){gridCache.clear();oldStart(mode,art);let a=game;a.background=$('paperPanel').hidden?window.getBackground?.():null;a.hostile=[];a.navTimer=0;a.shake=0;a.lastLife=a.life;a.lastScore=0;a.jumpPower=470*(a.motionScaleY||1);a.rivals=[];a.adjusted=false;
+if(mode===0){let heights=[];for(let x=12;x<W;x+=24){for(let y=12;y<H-1;y++){if(solid(x,y)&&!solid(x,y-1)&&!solid(x,y-8)){heights.push({x,y});break}}}let diff=0;for(let i=1;i<heights.length;i++)if(heights[i].x-heights[i-1].x<200)diff=Math.max(diff,Math.abs(heights[i].y-heights[i-1].y));a.jumpPower=clamp(Math.sqrt(2*1050*(a.motionScaleY||1)*(diff+52*(a.motionScaleY||1))),470*(a.motionScaleY||1),760*(a.motionScaleY||1));if(a.jumpPower>480*(a.motionScaleY||1))a.adjusted=true}
+if((mode===1||mode===2)&&a.goals.length){let route=navigation(a,a.goals[0],a.p);
   if(mode===1&&!route?.reachable(a.p)){
     // Keep maze playable without editing the child's image: relocate ONLY the
     // logical exit marker to a reachable cell as close as possible to the drawing.

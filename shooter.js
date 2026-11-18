@@ -83,15 +83,15 @@
   let a=game;
   if(a&&a.mode===3&&a.shooter&&!a.finished){
    const s=a.shooter;
-   s.scroll=(s.scroll+dt*135)%H;
+   s.scroll=(s.scroll+dt*135*(a.motionScaleY||1))%H;
    s.enemyDelay-=dt;s.obstacleDelay-=dt;
    if(s.enemyDelay<=0){s.enemyDelay+=between(1.1-a.t*.009,.55,1.1);enemySpawn(a)}
    if(s.obstacleDelay<=0){s.obstacleDelay+=between(2.9-a.t*.012,1.5,2.9);obstacleSpawn(a)}
-   for(const e of a.enemies){e.y+=e.scrollSpeed*dt;e.x=between(e.base+Math.sin(a.t*1.5+e.phase)*23,e.w/2+4,W-e.w/2-4);
+   for(const e of a.enemies){e.y+=e.scrollSpeed*(a.motionScaleY||1)*dt;e.x=between(e.base+Math.sin(a.t*1.5+e.phase)*23,e.w/2+4,W-e.w/2-4);
      e.face=Math.sin(a.t*1.5+e.phase)>0?1:-1;
      if(e.y>H+e.h)e.dead=true;
    }
-   for(const o of a.obstacles){o.y+=o.speed*dt;if(o.y>H+o.h)o.dead=true}
+   for(const o of a.obstacles){o.y+=o.speed*(a.motionScaleY||1)*dt;if(o.y>H+o.h)o.dead=true}
    // Keep active actors bounded, including sustained 45-second events.
    if(a.enemies.length>22)a.enemies=a.enemies.filter(e=>!e.dead).slice(-22);
    if(a.obstacles.length>12)a.obstacles=a.obstacles.filter(o=>!o.dead).slice(-12);

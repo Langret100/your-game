@@ -137,3 +137,9 @@ body.playing .touch[data-mode="1"] button[hidden],body.playing .touch[data-mode=
   body.playing .touch[data-mode="1"],
   body.playing .touch[data-mode="3"]{display:none!important}
 }
+
+.drawing canvas{display:block;max-width:100%;height:auto;image-rendering:auto;-webkit-user-select:none;user-select:none;touch-action:none}
+
+/* Five FHD pen presets, including small mobile portrait displays. */
+.pen-sizes{flex:0 1 auto;min-width:0}
+@media(max-width:700px){.quickbar{flex-wrap:wrap;justify-content:center}.pen-sizes{flex:1 1 100%;justify-content:center}.quickbar .pen-sizes button{min-width:28px;padding:3px 8px}}
